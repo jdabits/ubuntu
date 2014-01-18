@@ -1,0 +1,139 @@
+
+#include <Wire.h>
+#include <UTFT.h>
+#include <RTCtft.h>
+   char hours[10];
+ char minutes[10];
+ char seconds[10];
+  char days [10];
+ char months [10];
+ char years [10];
+RTC_DS1307 RTC;                  //New DS1307 RTC
+int analogPin=0;
+int val =0;
+char sens [20];
+extern uint8_t SmallFont[];
+extern uint8_t BigFont[];
+
+UTFT myGLCD(ITDB32WD, 38, 39, 40, 41); 
+
+void setup(){
+  RTC.begin();
+  Wire.begin(); 
+  myGLCD.InitLCD();
+  myGLCD.clrScr();
+  
+  myGLCD.setBackColor(255, 125, 0);
+ myGLCD.setColor(0, 255, 255);
+ myGLCD.setFont(BigFont);
+ myGLCD.print("PRUEBA ARDUINO MEGA + TFT",CENTER, 0);
+ myGLCD.setBackColor(0, 0, 0);
+ myGLCD.setFont(SmallFont);
+ myGLCD.setColor(255, 255, 255);
+ myGLCD.print("***Reloj en Tiempo Real***", CENTER,20);
+ myGLCD.setBackColor(0, 0, 0);
+ myGLCD.setColor(25, 255, 255);
+ myGLCD.setFont(BigFont); 
+  
+  //RTC.adjust(DateTime(__DATE__,__TIME__)); //Start RTC
+                   //Start Serial
+  //LCD.begin(2,16);               //Start LCD
+  //LCD.write("RTC DS1307");
+  //delay(2000);
+  //LCD.clear();                   //Clear LCD just in case
+  //pinMode(backlightOut,OUTPUT);  //LCD backlight
+  //pinMode(backlightIn,INPUT_PULLUP); //LCD backlight trigger switch signal input pin
+ // digitalWrite(backlightOut,HIGH);  //Turn on backlight on start
+}
+void loop(){
+ 
+         //update the DS1307's time (you should do this every year; at least)
+  
+  val = analogRead(analogPin); 
+  
+  if (val < 10 ){
+  sprintf(sens, "%0d", val);
+  myGLCD.print(sens, 115, 80);
+    myGLCD.print("   ", 125, 80); 
+  }
+   
+  if (val < 100 ){
+  sprintf(sens, "%0d", val);
+  myGLCD.print(sens, 115, 80); 
+  myGLCD.print("   ", 150, 80);       
+  } 
+   
+   
+   if (val < 1000) {
+   sprintf(sens, "%0d", val);
+  myGLCD.print(sens, 115, 80); 
+  myGLCD.print("   ", 165, 80);  
+   }
+   else {
+     sprintf(sens, "%0d", val);
+  myGLCD.print(sens, 115, 80);
+   }
+   
+  DateTime now = RTC.now();   
+  if (now.day() < 10) {
+  sprintf(days, "%0d", now.day());
+  myGLCD.print(days, 115, 200);  
+  myGLCD.print("/", 130, 200);
+  myGLCD.print(" ", 100, 200);
+  
+    }
+    
+  else {
+  sprintf(days, "%0d", now.day());
+  myGLCD.print(days, 100, 200);
+  myGLCD.print("/", 130, 200);
+  }
+  if (now.month() < 10){
+  sprintf(months, "%0d", now.month());
+  sprintf(years, "%0d",now.year());
+  myGLCD.print(months, 150, 200);  
+  myGLCD.print("/", 170, 200);
+  myGLCD.print(years, 190, 200);
+  }
+  //else{
+    //sprintf(days, "%0d", now.day());
+    sprintf(months, "%0d", now.month());
+    sprintf(years, "%0d",now.year());
+     //myGLCD.print(days, 100, 200);  
+     //myGLCD.print("/", 130, 200);
+     myGLCD.print(months, 150, 200);  
+     myGLCD.print("/", 180, 200);
+     myGLCD.print(years, 200, 200); 
+  //}
+      if (now.hour() < 10) {
+        sprintf(hours, "%0d", now.hour()); 
+        myGLCD.print(hours, 145, 220);
+        myGLCD.print(":", 160, 220);
+      }
+     // else {
+        sprintf(hours, "%0d", now.hour()); 
+        myGLCD.print(hours, 130, 220);
+        myGLCD.print(":", 160, 220);
+      //}
+      
+      if (now.minute() < 10){
+        sprintf(seconds, "%0d  ",now.second());
+        sprintf(minutes, "%0d ",now.minute());
+        myGLCD.print(minutes, 175, 220);
+        myGLCD.print(":", 190, 220);
+        myGLCD.print(seconds, 200, 220);
+      }
+      else{
+       //sprintf(hours, "%0d", now.hour()); 
+       sprintf(minutes, "%0d ",now.minute());
+       sprintf(seconds, "%0d  ",now.second());  
+        //myGLCD.print(hours, 130, 220);
+       // myGLCD.print(":", 160, 220); 
+        myGLCD.print(minutes, 175, 220);
+        myGLCD.print(":", 205, 220);
+        myGLCD.print(seconds, 215, 220);
+      }
+  delay(1000); //30 fps
+   //myGLCD.clrScr();//update screen
+}
+  
